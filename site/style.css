@@ -1,0 +1,490 @@
+/* ===================================================================
+   Tokens
+=================================================================== */
+:root {
+  --bg: #F5F6F1;
+  --paper: #FCFCFA;
+  --ink: #1B1F27;
+  --ink-soft: #565F6B;
+  --ink-faint: #8A9099;
+  --line: #DBDCD3;
+  --teal: #2F6F62;
+  --teal-soft: #E4ECE8;
+  --bronze: #9C5A2E;
+  --bronze-soft: #F1E4D8;
+  --blue: #3D6EA5;
+  --blue-soft: #E5EDF4;
+
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Intentionally not switching to dark mode — the lab-paper aesthetic
+     is the point of the design; forcing a dark scheme would fight it. */
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--teal);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+a:hover { border-color: currentColor; }
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 600;
+  margin: 0;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ===================================================================
+   Signature element: the phylogenetic spine
+   A faint branching line runs the full height of the page behind the
+   content, echoing the tumor-lineage trees the research section
+   describes. It surfaces concretely again in the Positions timeline.
+=================================================================== */
+.spine {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: var(--line);
+  z-index: 0;
+  pointer-events: none;
+}
+.spine::before,
+.spine::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  background: var(--line);
+}
+.spine::before {
+  top: 22%;
+  height: 14%;
+  left: -140px;
+  transform: rotate(28deg);
+  transform-origin: bottom;
+}
+.spine::after {
+  top: 58%;
+  height: 16%;
+  left: 90px;
+  transform: rotate(-22deg);
+  transform-origin: top;
+}
+@media (max-width: 860px) {
+  .spine { display: none; }
+}
+
+/* ===================================================================
+   Layout shell
+=================================================================== */
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 22px 28px;
+  background: rgba(245, 246, 241, 0.88);
+  backdrop-filter: blur(6px);
+}
+.topbar-mark {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.topbar-nav {
+  display: flex;
+  gap: 20px;
+}
+.topbar-nav a {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  border-bottom: none;
+}
+.topbar-nav a:hover { color: var(--teal); }
+
+@media (max-width: 560px) {
+  .topbar-nav { gap: 12px; }
+  .topbar-nav a { font-size: 11px; }
+  .topbar { padding: 16px 20px; }
+}
+
+/* ===================================================================
+   Hero
+=================================================================== */
+.hero {
+  padding: 100px 0 72px;
+}
+.legend {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  margin: 0 0 22px;
+}
+.hero h1 {
+  font-size: clamp(48px, 9vw, 84px);
+  line-height: 0.98;
+  margin-bottom: 26px;
+}
+.hero-role {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(18px, 2.4vw, 22px);
+  color: var(--ink-soft);
+  max-width: 480px;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.hero-meta .dot {
+  color: var(--line);
+  margin: 0 8px;
+}
+
+/* ===================================================================
+   Sections, general
+=================================================================== */
+.section, .contact {
+  padding: 64px 0;
+  border-top: 1px solid var(--line);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.section.is-visible, .contact.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .section, .contact { transition: none; opacity: 1; transform: none; }
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--teal);
+  margin: 0 0 10px;
+}
+.section h2 {
+  font-size: clamp(26px, 4vw, 34px);
+  margin-bottom: 8px;
+}
+.section-intro {
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 8px 0 32px;
+}
+
+/* ===================================================================
+   Research cards
+=================================================================== */
+.research-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--teal);
+  border-radius: 3px;
+  padding: 26px 28px;
+  margin-bottom: 20px;
+}
+.research-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.research-head h3 {
+  font-size: 19px;
+}
+.research-when {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.research-card p {
+  color: var(--ink-soft);
+  margin: 0;
+}
+.tool-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 18px 0 0;
+}
+.tool-tags li {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--teal-soft);
+  color: var(--teal);
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+/* ===================================================================
+   Honors results table
+=================================================================== */
+.results-table {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.results-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 1.3fr;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+.results-row:last-child { border-bottom: none; }
+.results-row--head {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: rgba(0,0,0,0.015);
+}
+.results-year {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.results-tag {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.results-tag--gold {
+  color: var(--bronze);
+  font-weight: 500;
+}
+
+@media (max-width: 620px) {
+  .results-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 16px 18px;
+  }
+  .results-row--head { display: none; }
+  .results-year::before { content: "Season · "; color: var(--ink-faint); }
+}
+
+/* ===================================================================
+   Positions — lineage timeline (echoes the phylogenetic spine)
+=================================================================== */
+.lineage {
+  position: relative;
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+.lineage-item {
+  position: relative;
+  padding-bottom: 34px;
+}
+.lineage-item:last-child { padding-bottom: 0; }
+.lineage-node {
+  position: absolute;
+  left: -33px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1px var(--teal);
+}
+.lineage-item--closed .lineage-node {
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--ink-faint);
+}
+.lineage-when {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+.lineage-content h3 {
+  font-size: 17px;
+  margin: 4px 0 8px;
+}
+.lineage-content p {
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 58ch;
+}
+.lineage-item--closed .lineage-content h3,
+.lineage-item--closed .lineage-content p {
+  color: var(--ink-faint);
+}
+
+/* ===================================================================
+   Education
+=================================================================== */
+.edu-grid {
+  display: grid;
+  gap: 16px;
+}
+.edu-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 22px 24px;
+}
+.edu-card h3 { font-size: 17px; }
+.edu-when {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 8px 0 10px;
+}
+.edu-card p {
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ===================================================================
+   Scores
+=================================================================== */
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.score-block {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 26px 20px;
+  text-align: center;
+}
+.score-num {
+  display: block;
+  font-family: var(--mono);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  color: var(--ink);
+}
+.score-den {
+  font-size: 0.5em;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+.score-label {
+  display: block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 560px) {
+  .scores-grid { grid-template-columns: 1fr; }
+}
+
+.ap-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ap-chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 11px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+.ap-chip--5 {
+  border-color: var(--teal-soft);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.ap-chip--4 {
+  border-color: var(--bronze-soft);
+  background: var(--bronze-soft);
+  color: var(--bronze);
+}
+
+/* ===================================================================
+   Contact / footer
+=================================================================== */
+.contact {
+  text-align: left;
+  padding-bottom: 90px;
+}
+.contact h2 { margin-bottom: 20px; }
+.contact-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.contact-loc {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
